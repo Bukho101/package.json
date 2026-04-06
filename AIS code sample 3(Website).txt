@@ -1,0 +1,401 @@
+"use client";
+import React, { useState } from "react";
+import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Phone, Mail, MapPin, MessageCircle, Menu, X, Calendar, ShieldCheck, Clock, Star } from "lucide-react";
+import { motion } from "framer-motion";
+import { initializeApp } from "firebase/app";
+import { getFirestore, collection, addDoc } from "firebase/firestore";
+
+// 🔥 BRAND COLORS (AIS)
+// Blue: #0B3C91
+// Red: #E11D48
+// White: #FFFFFF
+
+const firebaseConfig = {
+  apiKey: "YOUR_API_KEY",
+  authDomain: "YOUR_PROJECT.firebaseapp.com",
+  projectId: "YOUR_PROJECT_ID",
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+const servicesData = [
+  { title: "Home Automation Packages", price: "From R4,999", desc: "Smart home control, lighting, security & automation systems" },
+  { title: "Software Design & Development", price: "From R4,999", desc: "Web apps, systems & business automation software" },
+  { title: "POS Systems", price: "From R6,999", desc: "Complete retail & restaurant POS solutions" },
+  { title: "Car Dash Cameras", price: "From R1,999", desc: "Front & rear camera installation" },
+  { title: "IT Support & Networking", price: "From R2,499", desc: "On-site support & networking" },
+  { title: "CCTV Installation", price: "From R6,999", desc: "HD surveillance systems" },
+  { title: "Gate Motor & Intercom Systems", price: "From R4,799", desc: "Automation & security systems" },
+];
+
+export default function AISWebsite() {
+  const [booking, setBooking] = useState({ name: "", phone: "", email: "", date: "", time: "", service: "", category: "" });
+  const [loading, setLoading] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
+
+  const handleBookingChange = (e) => {
+    setBooking({ ...booking, [e.target.name]: e.target.value });
+  };
+
+  const handleBookingSubmit = async () => {
+    if (!booking.name || !booking.phone || !booking.email || !booking.date || !booking.time || !booking.category) {
+      alert("Please fill all fields");
+      return;
+    }
+
+    setLoading(true);
+    await addDoc(collection(db, "bookings"), booking);
+    setLoading(false);
+    alert("Booked successfully");
+  };
+
+  return (
+    <div className="font-sans text-gray-800 bg-white">
+
+      {/* NAVBAR */}
+      <nav className="flex justify-between items-center p-6 shadow-md bg-white sticky top-0 z-50">
+        <h1 className="font-bold text-xl text-[#0B3C91]">AIS</h1>
+
+        <div className="space-x-6 hidden md:flex font-semibold uppercase text-sm text-[#0B3C91]">
+          <a href="#about">About</a>
+          <a href="#services">Services</a>
+          <a href="#booking">Booking</a>
+          <a href="#contact">Contact</a>
+        </div>
+
+        <button onClick={() => setMenuOpen(!menuOpen)} className="md:hidden text-[#0B3C91]">
+          {menuOpen ? <X /> : <Menu />}
+        </button>
+      </nav>
+
+      {/* MOBILE MENU */}
+      {menuOpen && (
+        <div className="md:hidden bg-white p-6 space-y-4 shadow text-[#0B3C91]">
+          <a href="#about">About</a>
+          <a href="#services">Services</a>
+          <a href="#booking">Booking</a>
+          <a href="#contact">Contact</a>
+        </div>
+      )}
+
+      {/* HERO / HOME */}
+      <section className="relative overflow-hidden">
+        {/* Background */}
+        <div
+          className="absolute inset-0 bg-cover bg-center"
+          style={{ backgroundImage: "url('/ais-bg.jpg')" }}
+        />
+        <div className="absolute inset-0 bg-gradient-to-r from-[#0B3C91]/95 to-[#E11D48]/90" />
+
+        {/* Content */}
+        <div className="relative max-w-7xl mx-auto px-6 py-28 grid md:grid-cols-2 gap-10 items-center text-white">
+
+          {/* Left */}
+          <div>
+            <motion.h1
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6 }}
+              className="text-5xl md:text-6xl font-extrabold leading-tight mb-6 uppercase"
+            >
+              Smart IT, Security & Automation Solutions
+            </motion.h1>
+
+            <motion.p
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2 }}
+              className="text-lg text-gray-200 mb-8"
+            >
+              Enterprise-grade CCTV, networking, SaaS systems and automation built for modern businesses across Gauteng.
+            </motion.p>
+
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.4 }}
+              className="flex gap-4"
+            >
+              <a href="#booking">
+                <Button className="bg-white text-[#0B3C91] hover:bg-gray-200 px-6 py-3">
+                  Book a Service
+                </Button>
+              </a>
+              <a href="#services">
+                <Button className="bg-transparent border border-white hover:bg-white hover:text-[#0B3C91] px-6 py-3">
+                  View Services
+                </Button>
+              </a>
+            </motion.div>
+          </div>
+
+          {/* Right (Stats / Trust) */}
+          <div className="grid grid-cols-2 gap-6">
+            {[
+              { icon: <ShieldCheck />, label: "Certified Installers" },
+              { icon: <Clock />, label: "24/7 Support" },
+              { icon: <Star />, label: "Trusted in Gauteng" },
+              { icon: <Calendar />, label: "Fast Booking" },
+            ].map((item, i) => (
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: 0.3 + i * 0.1 }}
+                className="bg-white/10 backdrop-blur-md p-6 rounded-2xl text-center border border-white/20"
+              >
+                <div className="flex justify-center mb-2">{item.icon}</div>
+                <p className="text-sm font-semibold">{item.label}</p>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* TRUST STRIP */}
+      <section className="bg-white py-6 border-y">
+        <div className="max-w-6xl mx-auto flex flex-wrap justify-center gap-8 text-sm font-semibold text-gray-600">
+          <span>✔ 100+ Installations</span>
+          <span>✔ 50+ Clients Served</span>
+          <span>✔ Enterprise Solutions</span>
+          <span>✔ Gauteng Coverage</span>
+        </div>
+      </section>
+
+      {/* ABOUT */}
+      <section id="about" className="relative py-20 px-6 text-white overflow-hidden">
+
+        {/* PARALLAX BACKGROUND */}
+        <div className="absolute inset-0 bg-cover bg-center bg-fixed scale-110" style={{ backgroundImage: "url('/ais-bg.jpg')" }} />
+        <div className="absolute inset-0 bg-gradient-to-r from-[#0B3C91]/90 to-[#E11D48]/90" />
+
+        {/* CONTENT */}
+        <div className="relative max-w-6xl mx-auto">
+
+          <motion.h2
+            initial={{ opacity: 0, y: 40 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            className="text-4xl font-extrabold text-center mb-6 uppercase"
+          >
+            About Architech Integrated Solutions
+          </motion.h2>
+
+          <motion.p
+            initial={{ opacity: 0, y: 40 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
+            className="text-center max-w-3xl mx-auto text-gray-200 mb-12 text-lg"
+          >
+            Architech Integrated Solutions (Pty) Ltd is a forward-thinking technology company delivering integrated IT, security, and automation solutions designed for modern businesses.
+          </motion.p>
+
+          <div className="grid md:grid-cols-2 gap-10 items-start">
+
+            {/* LEFT */}
+            <div className="space-y-6">
+              {[
+                {
+                  title: "What We Do",
+                  text: "We provide SaaS platforms, CCTV, access control, intercom systems, vehicle surveillance, software development, smart automation, graphic design, and printing solutions.",
+                  border: "#E11D48",
+                },
+                {
+                  title: "Our Business Model",
+                  text: "We operate a hybrid model combining once-off installations with recurring monthly managed services, ensuring long-term value and continuous support.",
+                  border: "#0B3C91",
+                },
+                {
+                  title: "Our Vision",
+                  text: "Our goal is to scale across Gauteng before expanding nationally, becoming a trusted technology partner across South Africa.",
+                  border: "#E11D48",
+                },
+              ].map((item, i) => (
+                <motion.div
+                  key={i}
+                  initial={{ opacity: 0, y: 40 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  transition={{ delay: i * 0.2 }}
+                >
+                  <Card className="p-6 bg-white/10 backdrop-blur-lg border-l-4 text-white transition duration-300 hover:scale-105 hover:shadow-[0_0_25px_rgba(225,29,72,0.7)]">
+                    <h3 className="font-bold text-xl mb-2">{item.title}</h3>
+                    <p className="text-gray-200">{item.text}</p>
+                  </Card>
+                </motion.div>
+              ))}
+            </div>
+
+            {/* RIGHT */}
+            <div className="space-y-6">
+              <motion.div
+                initial={{ opacity: 0, y: 40 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.2 }}
+              >
+                <Card className="p-6 bg-white/10 backdrop-blur-lg border-l-4 border-[#0B3C91] text-white transition duration-300 hover:scale-105 hover:shadow-[0_0_25px_rgba(11,60,145,0.7)]">
+                  <h3 className="font-bold text-xl mb-2">Core Services</h3>
+                  <ul className="text-gray-200 space-y-1 list-disc list-inside">
+                    <li>IT Infrastructure & Support</li>
+                    <li>Software & App Development</li>
+                    <li>Networking & System Integration</li>
+                    <li>Security & Surveillance Systems</li>
+                    <li>Technology Consulting</li>
+                  </ul>
+                </Card>
+              </motion.div>
+
+              <motion.div
+                initial={{ opacity: 0, y: 40 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.4 }}
+              >
+                <Card className="p-6 bg-white/10 backdrop-blur-lg border-l-4 border-[#E11D48] text-white transition duration-300 hover:scale-105 hover:shadow-[0_0_25px_rgba(225,29,72,0.7)]">
+                  <h3 className="font-bold text-xl mb-2">Our Focus</h3>
+                  <ul className="text-gray-200 space-y-1 list-disc list-inside">
+                    <li>Affordable, easy-to-use POS systems</li>
+                    <li>Fast, scalable web & mobile applications</li>
+                    <li>Biometric access control systems</li>
+                    <li>CCTV sales & professional installations</li>
+                  </ul>
+                </Card>
+              </motion.div>
+            </div>
+
+          </div>
+
+        </div>
+      </section>
+
+      {/* SERVICES */}
+      <section id="services" className="py-16 px-6 bg-gray-50">
+        <h2 className="text-3xl font-bold text-center mb-10 text-[#0B3C91]">Services</h2>
+
+        <div className="grid md:grid-cols-3 gap-6 max-w-6xl mx-auto">
+          {servicesData.map((s, i) => (
+            <Card key={i} className="shadow-xl border-t-4 border-[#0B3C91] hover:scale-105 transition">
+              <CardContent className="p-6">
+                <h3 className="font-bold text-lg text-[#0B3C91]">{s.title}</h3>
+                <p className="text-gray-600">{s.desc}</p>
+                <div className="text-xl font-bold text-[#E11D48]">{s.price}</div>
+                <Button onClick={() => setBooking({ ...booking, service: s.title })} className="w-full mt-3 bg-[#E11D48] text-white hover:bg-red-700">Book</Button>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      </section>
+
+      {/* BOOKING / CONTACT FORM */}
+      <section id="booking" className="py-16 px-6 bg-white">
+        <h2 className="text-3xl font-bold text-center mb-10 text-[#E11D48]">Book a Service</h2>
+
+        <div className="max-w-xl mx-auto space-y-4">
+          <input
+            name="name"
+            placeholder="Name & Surname"
+            onChange={handleBookingChange}
+            className="w-full p-3 border rounded-xl"
+            required
+          />
+
+          <input
+            name="phone"
+            placeholder="Phone Number"
+            onChange={handleBookingChange}
+            className="w-full p-3 border rounded-xl"
+            required
+          />
+
+          <input
+            type="email"
+            name="email"
+            placeholder="Email Address"
+            onChange={handleBookingChange}
+            className="w-full p-3 border rounded-xl"
+            required
+          />
+
+          <input
+            type="date"
+            name="date"
+            onChange={handleBookingChange}
+            className="w-full p-3 border rounded-xl"
+            required
+          />
+
+          <select
+            name="category"
+            onChange={handleBookingChange}
+            className="w-full p-3 border rounded-xl"
+            required
+          >
+            <option value="">Select Service Category</option>
+            {servicesData.map((s, i) => (
+              <option key={i} value={s.title}>{s.title}</option>
+            ))}
+          </select>
+
+          <select
+            name="time"
+            onChange={handleBookingChange}
+            className="w-full p-3 border rounded-xl"
+            required
+          >
+            <option value="">Select Time Slot</option>
+            <option value="08:00">08:00 AM</option>
+            <option value="09:00">09:00 AM</option>
+            <option value="10:00">10:00 AM</option>
+            <option value="11:00">11:00 AM</option>
+            <option value="12:00">12:00 PM</option>
+            <option value="13:00">01:00 PM</option>
+            <option value="14:00">02:00 PM</option>
+            <option value="15:00">03:00 PM</option>
+            <option value="16:00">04:00 PM</option>
+          </select>
+
+          <Button onClick={handleBookingSubmit} className="w-full bg-[#0B3C91] text-white">
+            {loading ? "Processing..." : "Confirm Booking"}
+          </Button>
+        </div>
+      </section>
+
+      {/* CONTACT */}
+      <section id="contact" className="py-16 px-6 bg-gray-50 text-center">
+        <h2 className="text-3xl font-bold mb-6 text-[#0B3C91]">Contact</h2>
+        <div className="space-y-2 text-gray-700 mb-8">
+          <p><MapPin className="inline" /> Roodepoort, Johannesburg, 1724</p>
+          <p><Phone className="inline" /> +27 68 831 1572</p>
+          <p><Mail className="inline" /> info@aisolutions.co.za</p>
+        </div>
+
+                      {/* REQUEST CALL BACK */}
+        <div className="mt-8 max-w-md mx-auto bg-white p-6 rounded-2xl shadow">
+          <h3 className="text-lg font-semibold text-[#0B3C91] mb-3">Request a Call Back</h3>
+          <input
+            placeholder="Enter your phone number"
+            className="w-full p-3 border rounded-xl mb-3"
+            onChange={(e) => setBooking({ ...booking, phone: e.target.value })}
+          />
+          <Button
+            onClick={handleBookingSubmit}
+            className="w-full bg-[#E11D48] text-white hover:bg-red-700"
+          >
+            Request Call Back
+          </Button>
+        </div>
+      </section>
+
+      {/* WHATSAPP */}
+      <a href="https://wa.me/27688311572" className="fixed bottom-6 right-6 bg-[#E11D48] text-white p-4 rounded-full shadow-lg hover:bg-red-700">
+        <MessageCircle />
+      </a>
+
+      {/* FOOTER */}
+      <footer className="bg-[#0B3C91] text-white text-center py-6">
+        © {new Date().getFullYear()} AIS Solutions
+      </footer>
+    </div>
+  );
+}
